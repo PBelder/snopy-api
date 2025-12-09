@@ -52,7 +52,7 @@ def get_sp500_companies():
 
         # Rename columns to match desired output
         # StockAnalysis columns: No., Symbol, Company Name, Market Cap, Stock Price, % Change, Revenue
-        df = df.rename(columns={'Company Name': 'companyName', 'Symbol': 'symbol'})
+        df = df.rename(columns={'Company Name': 'companyName', 'Symbol': 'symbol', 'Stock Price': 'stockPrice'})
         
         # Convert to list of dictionaries
         companies = df.to_dict(orient='records')
@@ -60,7 +60,7 @@ def get_sp500_companies():
         # Parse market cap and clean up
         for company in companies:
             # Keep only relevant fields
-            keys_to_keep = ['symbol', 'companyName', 'Market Cap']
+            keys_to_keep = ['symbol', 'companyName', 'Market Cap', 'stockPrice']
             for k in list(company.keys()):
                 if k not in keys_to_keep:
                     del company[k]
@@ -72,6 +72,16 @@ def get_sp500_companies():
             if 'Market Cap' in company:
                 del company['Market Cap']
             
+            # Clean stock price
+            try:
+                price = company.get('stockPrice', 0)
+                # Handle if it's a string
+                if isinstance(price, str):
+                    price = float(price.replace(',', '').strip())
+                company['stockPrice'] = round(float(price), 2)
+            except:
+                company['stockPrice'] = 0.0
+
             # Add logo URL
             # Handle special cases for FMP if needed, but usually standard tickers work
             # For dual listings like BRK.B, FMP often uses BRK-B
