@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+sp500.json
+sp500_market_cap.json
