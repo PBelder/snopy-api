@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import requests
 from datetime import datetime
+import pytz
 
 app = Flask(__name__)
 
@@ -86,15 +87,19 @@ def get_sp500_companies():
         return None, str(e)
 
 @app.route('/')
-def index():
-    return "Welcome to the S&P 500 API! Use /sp500 to get the list of companies."
+def hello():
+    return "Welcome to the S&P 500 API! Access /sp500 to get the list of companies."
 
 @app.route('/sp500')
 def sp500():
     companies, error = get_sp500_companies()
     if companies:
+        # Get current time in Israel
+        israel_tz = pytz.timezone('Asia/Jerusalem')
+        israel_time = datetime.now(israel_tz)
+        
         response = {
-            "generatedAt": datetime.now().strftime("%B %d, %Y %H:%M:%S"),
+            "generatedAt": israel_time.strftime("%B %d, %Y %H:%M:%S"),
             "companies": companies
         }
         return jsonify(response)
