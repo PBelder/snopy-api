@@ -3,6 +3,7 @@ import pandas as pd
 import requests
 import pandas as pd
 import requests
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -92,7 +93,11 @@ def index():
 def sp500():
     companies, error = get_sp500_companies()
     if companies:
-        return jsonify(companies)
+        response = {
+            "generatedAt": datetime.now().strftime("%B %d, %Y %H:%M:%S"),
+            "companies": companies
+        }
+        return jsonify(response)
     else:
         return jsonify({"error": f"Failed to fetch data: {error}"}), 500
 
